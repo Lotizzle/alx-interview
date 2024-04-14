@@ -2,6 +2,7 @@
 """ Created a method for creating a pascal's triangle """
 
 def pascal_triangle(n):
+    """ This method creates pascal's triangle """
     if n <= 0:
         return []
 
