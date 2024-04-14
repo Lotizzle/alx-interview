@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+""" Created a method for creating a pascal's triangle """
+
 def pascal_triangle(n):
     if n <= 0:
         return []
