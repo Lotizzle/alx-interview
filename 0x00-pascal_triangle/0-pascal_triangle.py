@@ -4,7 +4,7 @@
 def pascal_triangle(n):
     """ This method creates pascal's triangle """
     if n <= 0:
-        return []
+        return ([])
 
     triangle = [[1]]
 
@@ -15,4 +15,4 @@ def pascal_triangle(n):
         row.append(1)
         triangle.append(row)
 
-    return triangle
+    return (triangle)
