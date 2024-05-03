@@ -16,6 +16,7 @@ def print_statistics(total_size, status_counts):
     for status_code, count in sorted(status_counts.items()):
         print(f"{status_code}: {count}")
 
+
 def parse_line(line):
     """
     This functioon parses the stdin line to draw metrics
@@ -29,6 +30,7 @@ def parse_line(line):
     if not status_code.isdigit():
         return None, None
     return status_code, int(file_size)
+
 
 def main():
     """
@@ -48,6 +50,7 @@ def main():
     except KeyboardInterrupt:
         print_statistics(total_size, status_counts)
         raise
+
 
 if __name__ == "__main__":
     main()
