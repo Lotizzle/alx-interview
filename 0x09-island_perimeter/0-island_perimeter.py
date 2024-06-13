@@ -5,6 +5,12 @@ Calculating the island perimeter
 
 
 def island_perimeter(grid):
+    """
+    Calculates the perimeter of the Island
+    grid is a list of list of integers
+    0 represents water
+    1 represents land
+    """
     perimeter = 0
     rows = len(grid)
     cols = len(grid[0]) if rows > 0 else 0
