@@ -1,55 +1,50 @@
 #!/usr/bin/python3
 """
-Module contains script that reads stdin
-line by line and computes metrics.
+log parsing
 """
+
 import sys
-import signal
-
-total_size = 0
-status_counts = {}
-valid_status_codes = [200, 301, 400, 401, 403, 404, 405, 500]
-line_count = 0
+import re
 
 
-def print_stats():
-    """Print the accumulated metrics."""
-    print(f"File size: {total_size}")
-    for status_code in sorted(status_counts):
-        if status_code in valid_status_codes:
-            print(f"{status_code}: {status_counts[status_code]}")
+def output(log: dict) -> None:
+    """
+    helper function to display stats
+    """
+    print("File size: {}".format(log["file_size"]))
+    for code in sorted(log["code_frequency"]):
+        if log["code_frequency"][code]:
+            print("{}: {}".format(code, log["code_frequency"][code]))
 
 
-def signal_handler(sig, frame):
-    """Handle the keyboard interruption."""
-    print_stats()
-    sys.exit(0)
+if __name__ == "__main__":
+    regex = re.compile(
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] "GET /projects/260 HTTP/1.1" (.{3}) (\d+)')  # nopep8
 
+    line_count = 0
+    log = {}
+    log["file_size"] = 0
+    log["code_frequency"] = {
+        str(code): 0 for code in [
+            200, 301, 400, 401, 403, 404, 405, 500]}
 
-# Set the signal handler for keyboard interruption
-signal.signal(signal.SIGINT, signal_handler)
+    try:
+        for line in sys.stdin:
+            line = line.strip()
+            match = regex.fullmatch(line)
+            if (match):
+                line_count += 1
+                code = match.group(1)
+                file_size = int(match.group(2))
 
-try:
-    for line in sys.stdin:
-        parts = line.split()
-        if len(parts) == 9:
-            file_size = parts[-1]
-            status_code = parts[-2]
-            try:
-                total_size += int(file_size)
-                if (status_code.isdigit() and
-                        int(status_code) in valid_status_codes):
-                    if int(status_code) not in status_counts:
-                        status_counts[int(status_code)] = 1
-                    else:
-                        status_counts[int(status_code)] += 1
-            except ValueError:
-                continue
+                # File size
+                log["file_size"] += file_size
 
-        line_count += 1
-        if line_count % 10 == 0:
-            print_stats()
+                # status code
+                if (code.isdecimal()):
+                    log["code_frequency"][code] += 1
 
-except KeyboardInterrupt:
-    print_stats()
-    sys.exit(0)
+                if (line_count % 10 == 0):
+                    output(log)
+    finally:
+        output(log)
