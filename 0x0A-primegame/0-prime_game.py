@@ -6,83 +6,56 @@ This module contains the implementation of the isWinner function,
 which determines the winner of the Prime Game played between Maria and Ben.
 """
 
-
 def isWinner(x, nums):
-    """
-    Determines the winner of the Prime Game.
+    """Function to get who has won in prime game"""
+    mariaWinsCount = 0
+    benWinsCount = 0
 
-    Args:
-    x (int): The number of rounds.
-    nums (list): An array of n values for each round.
+    for num in nums:
+        roundsSet = list(range(1, num + 1))
+        primesSet = primes_in_range(1, num)
 
-    Returns:
-    str: Name of the player that won the most rounds (Maria or Ben).
-    None: If the winner cannot be determined.
-    """
-    def is_prime(n):
-        """
-        Check if a number is prime.
+        if not primesSet:
+            benWinsCount += 1
+            continue
 
-        Args:
-        n (int): The number to check.
+        isMariaTurns = True
 
-        Returns:
-        bool: True if the number is prime, False otherwise.
-        """
-        if n < 2:
+        while(True):
+            if not primesSet:
+                if isMariaTurns:
+                    benWinsCount += 1
+                else:
+                    mariaWinsCount += 1
+                break
+
+            smallestPrime = primesSet.pop(0)
+            roundsSet.remove(smallestPrime)
+
+            roundsSet = [x for x in roundsSet if x % smallestPrime != 0]
+
+            isMariaTurns = not isMariaTurns
+
+    if mariaWinsCount > benWinsCount:
+        return "Winner: Maria"
+
+    if mariaWinsCount < benWinsCount:
+        return "Winner: Ben"
+
+    return None
+
+
+def is_prime(n):
+    """Returns True if n is prime, else False."""
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
             return False
-        for i in range(2, int(n**0.5) + 1):
-            if n % i == 0:
-                return False
-        return True
+    return True
 
-    def get_primes(n):
-        """
-        Get all prime numbers up to n.
 
-        Args:
-        n (int): The upper limit.
-
-        Returns:
-        list: A list of prime numbers up to n.
-        """
-        primes = []
-        for i in range(2, n + 1):
-            if is_prime(i):
-                primes.append(i)
-        return primes
-
-    def play_game(n):
-        """
-        Simulate a single game and determine the winner.
-
-        Args:
-        n (int): The upper limit of the set of integers for the game.
-
-        Returns:
-        str: The name of the winner (Maria or Ben).
-        """
-        primes = get_primes(n)
-        if not primes:
-            return "Ben"
-        return "Maria" if len(primes) % 2 == 1 else "Ben"
-
-    if not nums or x <= 0:
-        return None
-
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        winner = play_game(n)
-        if winner == "Maria":
-            maria_wins += 1
-        else:
-            ben_wins += 1
-
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
-        return "Ben"
-    else:
-        return None
+def primes_in_range(start, end):
+    """Returns a list of prime numbers between start and end (inclusive)."""
+    primes = [n for n in range(start, end+1) if is_prime(n)]
+    return primes
