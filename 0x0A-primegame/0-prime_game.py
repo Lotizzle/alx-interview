@@ -18,12 +18,6 @@ def isWinner(x, nums):
     Returns:
     str: Name of the player that won the most rounds (Maria or Ben).
     None: If the winner cannot be determined.
-
-    The game rules:
-    - Players take turns choosing a prime number from a set of consecutive integers.
-    - The chosen number and its multiples are removed from the set.
-    - The player who cannot make a move loses the game.
-    - Maria always goes first.
     """
     def is_prime(n):
         """
